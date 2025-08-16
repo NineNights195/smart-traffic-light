@@ -1,11 +1,22 @@
+# Python bytecode and cache
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# OS file
 *.DS_Store
+
+# Virtual environtments
 venv/
 env/
+
+# Jupiter Notebook auto-save checkpoint
 .ipynb_checkpoints/
+
+# Machine learning model and databases (large files)
 models/
 data/
-.idea
+
+# PyCharm IDE config
+.idea/
