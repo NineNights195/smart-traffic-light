@@ -1,6 +1,6 @@
 import cv2
 
-cam = cv2.VideoCapture(2)  # 0 : Default webcam
+cam = cv2.VideoCapture(0)  # 0 is default webcam
 if not cam.isOpened():
     print("Error: Can't open camera")
     exit()
