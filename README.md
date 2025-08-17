@@ -2,26 +2,24 @@
 
 ---
 
-# ⚙️ Setup instruction
-### 1. **Install Python 3.13.7**
-- Download from [python.org](https://www.python.org/downloads/)
-- Make sure to check "Add Python to PATH" during installation
-- Check if it installed
-  ```bash
-  python --version
+## 🛠️ Requirements
+- Linux (Ubuntu/Debian recommended) or Windows with Python installed
+- Python **3.12 or 3.13**
+- Webcam or external camera
+- Git
+
+---
+
+## ⚙️ Setup instruction
+
+### 1. **Create Virtual Environment**
+- Go to your repo
   ```
-  or
-  ```bash
-  python3 --version
+  cd [your repo directory]
+  python -m venv venv
   ```
 
-### 2. **Create Virtual Environment**
-- I'd recommended because
-   ```bash
-   python -m venv venv
-   ```
-
-### 4. **Activate Virtual Environment**
+### 2. **Activate Virtual Environment**
    - Windows:
      ```bash
      .\venv\Scripts\activate
@@ -32,11 +30,22 @@
      source venv/bin/activate
      ```
 
+### 3. Ensure pip is avaliable
+- If pip is missing inside the venv, run:
+  ```
+  python -m ensurepip --upgrade
+  ```
+
+### 4. Upgrade pip, setuptools, and wheel
+```
+pip install --upgrade pip setuptools wheel
+```
+
 ### 5. **Install Dependencies**
   ```bash
   pip install -r requirements.txt
   ```
-  - Requrements dependencies
+  - Requirements dependencies
     ```
     opencv-python
     numpy
