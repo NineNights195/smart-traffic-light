@@ -10,7 +10,7 @@ while True:
     if not ret:
         print("Error: Can't receive frame. Exiting...")
         break
-    cv2.imshow("webcam-test", frame)
+    cv2.imshow("Webcam test", frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
