@@ -32,29 +32,17 @@ def simulate_traffic_light():
             else:  # inactive
                 cv2.circle(img, pos, 50, (50, 50, 50), -1)
 
-        # Timer logic
-        countdown_time = times[state]
+        # Timer
         start = time.time()
-        while time.time() - start < countdown_time:
-            img_display = img.copy()
-
-            remaining = int(countdown_time - (time.time() - start))
-            cv2.putText(
-            img_display,
-                str(remaining),
-                (70, 380),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                2,
-                (255,255,255),
-                3,
-                cv2.LINE_AA
-            )
-
-            cv2.imshow("Traffic Light", img_display)
-
+        while time.time() - start < times[state]:
+            cv2.imshow("Traffic Light", img)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 cv2.destroyAllWindows()
                 return
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
+            return
 
         # Next state
         state = (state + 1) % len(states)  # loop
