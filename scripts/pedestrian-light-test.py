@@ -4,13 +4,13 @@ import time
 
 def simulate_pedestrian_light():
     # Create a blank window
-    width, height = 600, 400   # swap dimensions
+    width, height = 600, 400
     window = np.zeros((height, width, 3), dtype=np.uint8)
 
-    # State control
+    # State and durations control
     states = [("STOP", (0, 0, 255)),  # Red
               ("WALK", (0, 255, 0))]  # Green
-    durations = [5, 5]  # seconds for each state
+    durations = [5, 8]
     current_state = 0
     last_switch = time.time()
 
@@ -36,7 +36,7 @@ def simulate_pedestrian_light():
         cv2.putText(frame, text, (20, 380), cv2.FONT_HERSHEY_SIMPLEX,
                     1, color, 2, cv2.LINE_AA)
 
-        cv2.imshow("Pedestrian Signal", frame)
+        cv2.imshow("Pedestrian Traffic Light", frame)
 
         # Exit with Q
         if cv2.waitKey(100) & 0xFF == ord("q"):
