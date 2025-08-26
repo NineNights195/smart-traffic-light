@@ -25,7 +25,10 @@ git clone -b <branch-name> https://github.com/NineNights195/smart-traffic-light.
 ### 2. **Create Virtual Environment**
 - Go to your repo
   ```
-  cd [your repo directory]
+  cd <your repo directory>
+  ```
+- Create virtual enviroment to prevent using system python
+  ```
   python -m venv venv
   ```
 
