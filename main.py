@@ -7,13 +7,13 @@ import os
 # ---------------- Configuration ----------------
 CAM_INDEX = 2
 MODEL_PATH = "models/yolov8n.pt"
-CONFIDENCE = 0.25
-IMG_SZ = 640
-YELLOW_DURATION = 2   # seconds for Green -> Yellow -> Red
-GREEN_DURATION = 4    # minimum seconds that green must stay before it can switch
-FLASH_DURATION = 3    # seconds for flashing when Red -> Green
-NO_PERSON_CONFIRM = 2  # seconds of continuous no-person required before switching RED -> FLASHING -> GREEN
-PERSON_CONFIRM = 2     # seconds of continuous person detection required before switching GREEN -> YELLOW
+CONFIDENCE = 0.25       # minimum confidence threshold for YOLO detections
+IMG_SZ = 640            # image size to which frames are resized before being passed to the YOLO model
+YELLOW_DURATION = 2     # seconds for switching from Yellow -> Red
+GREEN_DURATION = 4      # minimum seconds that green must stay before it can switch
+FLASH_DURATION = 3      # seconds for flashing when switching from Red -> Green in pedestrian light
+NO_PERSON_CONFIRM = 2   # seconds of continuous no-person detection required before switching from Red -> Yellow -> Green
+PERSON_CONFIRM = 2      # seconds of continuous person detection required before switching from Green -> Yellow
 # ------------------------------------------------
 
 # Ensure YOLO weights exist (auto-download if missing)
@@ -72,20 +72,21 @@ def draw_pedestrian_light(canvas, state):
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0,255,0), 3)
 # ---------------------------------------
 
-print("Starting Smart Traffic Light (state machine). Press 'q' to quit.")
+print("Starting Smart Traffic Light. Press 'q' to quit.")
 
-# ---- State Machine Variables ----
+# ---- Default State Machine Variables ----
 traffic_state = "GREEN"
 pedestrian_state = "STOP"
 phase_start = time.time()
 last_switch = 0
-no_person_start = None     # timer to confirm continuous absence of people (RED -> GREEN)
-person_detect_start = None # timer to confirm continuous presence of people (GREEN -> YELLOW)
+no_person_start = None     # timer to confirm continuous absence of people (Red -> Yellow -> Green)
+person_detect_start = None # timer to confirm continuous presence of people (Green -> Yellow)
 # ----------------------------------
 
 while True:
     ret, frame = cam.read()
     if not ret:
+        print("Error: Can't receive frame. Exiting...")
         break
 
     results = model(frame, imgsz=IMG_SZ, conf=CONFIDENCE, classes=target_classes)
@@ -105,7 +106,7 @@ while True:
     now = time.time()
 
     if traffic_state == "GREEN":
-        # vehicles get green, pedestrians STOP
+        # vehicles get green, pedestrians show STOP sign
         pedestrian_state = "STOP"
 
         # Confirm person presence for PERSON_CONFIRM seconds before switching,
@@ -126,7 +127,7 @@ while True:
 
     elif traffic_state == "YELLOW":
         pedestrian_state = "STOP"
-        # during yellow, presence/presence timer not needed; wait fixed yellow duration
+        # during yellow, presence timer not needed; wait fixed yellow duration
         if now - phase_start >= YELLOW_DURATION:
             traffic_state = "RED"
             pedestrian_state = "WALK"
@@ -136,7 +137,6 @@ while True:
             person_detect_start = None
 
     elif traffic_state == "RED":
-        # pedestrians WALK while RED is active
         pedestrian_state = "WALK"
         # start confirmation timer when no persons detected
         if person_count == 0:
@@ -150,7 +150,7 @@ while True:
                     no_person_start = None
                     person_detect_start = None
         else:
-            # someone still detected — reset the no-person timer
+            # someone still detected: reset the no-person timer
             no_person_start = None
 
     elif traffic_state == "FLASHING":
@@ -167,11 +167,14 @@ while True:
             person_detect_start = None
     # ---------------------------------------------------
 
-    # --- Create UI canvas ---
+    # ----------- Create UI canvas -----------
     ui = np.zeros((annotated.shape[0], 600, 3), dtype=np.uint8)
+
+    # Draw the traffic light and pedestrian light
     draw_traffic_light(ui, traffic_state if traffic_state != "FLASHING" else "RED")
     draw_pedestrian_light(ui, pedestrian_state)
 
+    # Draw the number of persons and vehicles detected
     cv2.putText(ui, f"Persons: {person_count}", (30, 300),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255,255,255), 2)
     cv2.putText(ui, f"Vehicles: {vehicle_count}", (30, 340),
@@ -189,6 +192,7 @@ while True:
               f"person_detect_timer: {pd_timer}s, no_person_timer: {np_timer}s")
         last_switch = now
 
+    # Quit the program when 'q' is pressed
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 
