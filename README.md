@@ -78,3 +78,17 @@ pip install --upgrade pip setuptools wheel
   python webcam-test.py
   ```
   Now it should work properly
+
+### 8. Download YOLO model
+- Create a folder called models inside your project (if it doesn’t exist yet):
+  ```
+  mkdir -p models
+  ```
+- Download the YOLOv8 nano model (yolov8n.pt) into the models/ directory:
+  ```
+  wget -O models/yolov8n.pt https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt
+  ```
+  Alternatively, if wget is not available, use curl:
+  ```
+  curl -L -o models/yolov8n.pt https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt
+  ```
