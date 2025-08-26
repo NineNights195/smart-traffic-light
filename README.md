@@ -12,14 +12,24 @@
 
 ## ⚙️ Setup instruction
 
-### 1. **Create Virtual Environment**
+### 1. **Clone the Repository**
+- Clone default branch (main):
+```
+git clone https://github.com/NineNights195/smart-traffic-light.git
+```
+- To clone specific branch:
+```
+git clone -b <branch-name> https://github.com/NineNights195/smart-traffic-light.git
+```
+
+### 2. **Create Virtual Environment**
 - Go to your repo
   ```
   cd [your repo directory]
   python -m venv venv
   ```
 
-### 2. **Activate Virtual Environment**
+### 3. **Activate Virtual Environment**
    - Windows:
      ```bash
      .\venv\Scripts\activate
@@ -30,18 +40,18 @@
      source venv/bin/activate
      ```
 
-### 3. Ensure pip is avaliable
+### 4. Ensure pip is avaliable
 - If pip is missing inside the venv, run:
   ```
   python -m ensurepip --upgrade
   ```
 
-### 4. Upgrade pip, setuptools, and wheel
+### 5. Upgrade pip, setuptools, and wheel
 ```
 pip install --upgrade pip setuptools wheel
 ```
 
-### 5. **Install Dependencies**
+### 6. **Install Dependencies**
   ```bash
   pip install -r requirements.txt
   ```
@@ -50,12 +60,16 @@ pip install --upgrade pip setuptools wheel
     opencv-python
     numpy
     torch
-    torchvision
     torchaudio
+    torchvision
     ultralytics
+    ultralytics-thop
+    pandas
+    pillow
+    tqdm
     ```
 
-### 6. Test some scripts
+### 7. Test some scripts
 - Now you can test some scripts in scripts folder
 - Example the webcam-test.py
   ```
