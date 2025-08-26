@@ -13,41 +13,40 @@
 ## ⚙️ Setup instruction
 
 ### 1. **Clone the Repository**
-- Clone default branch (main):
-```
-git clone https://github.com/NineNights195/smart-traffic-light.git
-```
-- To clone specific branch:
-```
-git clone -b <branch-name> https://github.com/NineNights195/smart-traffic-light.git
-```
+  - Clone default branch (main):
+    ```
+    git clone https://github.com/NineNights195/smart-traffic-light.git
+    ```
+  - To clone specific branch:
+    ```
+    git clone -b <branch-name> https://github.com/NineNights195/smart-traffic-light.git
+    ```
 
 ### 2. **Create Virtual Environment**
-- Go to your repo
-  ```
-  cd <your repo directory>
-  ```
-- Create virtual enviroment to prevent using system python
-  ```
-  python -m venv venv
-  ```
+  - Go to your repo
+    ```
+    cd <your repo directory>
+    ```
+  - Create virtual enviroment to avoids messing up system Python
+    ```
+    python -m venv venv
+    ```
 
 ### 3. **Activate Virtual Environment**
-   - Windows:
-     ```bash
-     .\venv\Scripts\activate
-     ```
-
-   - macOS/Linux:
-     ```bash
-     source venv/bin/activate
-     ```
+  - Windows:
+    ```bash
+    .\venv\Scripts\activate
+    ```
+  - macOS/Linux:
+    ```bash
+    source venv/bin/activate
+    ```
 
 ### 4. Ensure pip is avaliable
-- If pip is missing inside the venv, run:
-  ```
-  python -m ensurepip --upgrade
-  ```
+  - If pip is missing inside the venv, run:
+    ```
+    python -m ensurepip --upgrade
+    ```
 
 ### 5. Upgrade pip, setuptools, and wheel
 ```
