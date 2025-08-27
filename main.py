@@ -7,13 +7,13 @@ import os
 # ---------------- Configuration ----------------
 CAM_INDEX = 2
 MODEL_PATH = "models/yolov8n.pt"
-CONFIDENCE = 0.25       # minimum confidence threshold for YOLO detections
+CONFIDENCE = 0.09       # minimum confidence threshold for YOLO detections
 IMG_SZ = 640            # image size to which frames are resized before being passed to the YOLO model
 YELLOW_DURATION = 2     # seconds for switching from Yellow -> Red
 GREEN_DURATION = 4      # minimum seconds that green must stay before it can switch
 FLASH_DURATION = 3      # seconds for flashing when switching from Red -> Green in pedestrian light
-NO_PERSON_CONFIRM = 2   # seconds of continuous no-person detection required before switching from Red -> Yellow -> Green
-PERSON_CONFIRM = 2      # seconds of continuous person detection required before switching from Green -> Yellow
+NO_PERSON_CONFIRM = 1.5   # seconds of continuous no-person detection required before switching from Red -> Yellow -> Green
+PERSON_CONFIRM = 1.5      # seconds of continuous person detection required before switching from Green -> Yellow
 # ------------------------------------------------
 
 # Ensure YOLO weights exist (auto-download if missing)
@@ -174,11 +174,11 @@ while True:
     draw_traffic_light(ui, traffic_state if traffic_state != "FLASHING" else "RED")
     draw_pedestrian_light(ui, pedestrian_state)
 
-    # Draw the number of persons and vehicles detected
-    cv2.putText(ui, f"Persons: {person_count}", (30, 300),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255,255,255), 2)
-    cv2.putText(ui, f"Vehicles: {vehicle_count}", (30, 340),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255,255,255), 2)
+    # Draw the number of persons and vehicles detected (still in development)
+    # cv2.putText(ui, f"Persons: {person_count}", (30, 300),
+    #             cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255,255,255), 2)
+    # cv2.putText(ui, f"Vehicles: {vehicle_count}", (30, 340),
+    #             cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255,255,255), 2)
 
     combined = np.hstack((annotated, ui))
     cv2.imshow("Smart Traffic Light", combined)
