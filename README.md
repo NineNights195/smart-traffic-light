@@ -71,15 +71,7 @@ pip install --upgrade pip setuptools wheel
     tqdm
     ```
 
-### 7. Test some scripts
-- Now you can test some scripts in scripts folder
-- Example the webcam-test.py
-  ```
-  python webcam-test.py
-  ```
-  Now it should work properly
-
-### 8. Download YOLO model
+### 7. Download YOLO model
 - Create a folder called models inside your project (if it doesn’t exist yet):
   ```
   mkdir -p models
@@ -92,3 +84,12 @@ pip install --upgrade pip setuptools wheel
   ```
   curl -L -o models/yolov8n.pt https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt
   ```
+
+### 8. Test some scripts
+- Now you can test some scripts in scripts folder
+- Example the webcam-test.py
+  ```
+  python webcam-test.py
+  ```
+  Now it should work properly
+  
