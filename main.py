@@ -7,13 +7,13 @@ import os
 # ---------------- Configuration ----------------
 CAM_INDEX = 2
 MODEL_PATH = "models/yolov8n.pt"
-CONFIDENCE = 0.2       # minimum confidence threshold for YOLO detections
+CONFIDENCE = 0.09       # minimum confidence threshold for YOLO detections
 IMG_SZ = 640            # image size to which frames are resized before being passed to the YOLO model
 YELLOW_DURATION = 2     # seconds for switching from Yellow -> Red
 GREEN_DURATION = 4      # minimum seconds that green must stay before it can switch
 FLASH_DURATION = 3      # seconds for flashing when switching from Red -> Green in pedestrian light
-NO_PERSON_CONFIRM = 2   # seconds of continuous no-person detection required before switching from Red -> Yellow -> Green
-PERSON_CONFIRM = 2      # seconds of continuous person detection required before switching from Green -> Yellow
+NO_PERSON_CONFIRM = 1.5   # seconds of continuous no-person detection required before switching from Red -> Yellow -> Green
+PERSON_CONFIRM = 1.5      # seconds of continuous person detection required before switching from Green -> Yellow
 # ------------------------------------------------
 
 # Ensure YOLO weights exist (auto-download if missing)
