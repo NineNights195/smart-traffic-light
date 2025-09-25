@@ -1,4 +1,12 @@
-# 🚦 DEPA 2025 : Smart Traffic Light
+# 🚦 Smart Traffic Light
+### 💻 The Project for Coding Thailand 2025 - Regional Competition
+This project is built for the Coding Thailand 2025 - Regional Competition to simulate and use AI to solve traffic problems.
+
+Using Python and a webcam, the system employs the advanced YOLOv8 (nano version) object detection model to:
+- Count persons and vehicles in real time at an intersection.
+- Change traffic lights based on what it detected (person is top priority).
+
+The goals for this project are to qualify for the **National round** and to practice my Python skills at the same time. When I enter the national round, I will make the Raspberry Pi version. However, the AI may have issues detecting persons and vehicles and needs improvement in the future.
 
 ---
 
