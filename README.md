@@ -1,103 +1,100 @@
 # 🚦 Smart Traffic Light
-### 💻 The Project for Coding Thailand 2025 - Regional Competition
-This project is built for the Coding Thailand 2025 - Regional Competition to simulate and use AI to solve traffic problems.
 
-Using Python and a webcam, the system employs the advanced YOLOv8 (nano version) object detection model to:
-- Count persons and vehicles in real time at an intersection.
-- Change traffic lights based on what it detected (person is top priority).
+AI-assisted traffic-light prototype that uses a camera feed to prioritise pedestrian safety. The current milestone is to turn the original Python proof of concept into a complete, demonstrable system: a reliable detection and control backend, a web dashboard for monitoring it, and eventually a Raspberry Pi deployment.
 
-The goals for this project are to qualify for the **National round** and to practice my Python skills at the same time. When I enter the national round, I will make the Raspberry Pi version. However, the AI may have issues detecting persons and vehicles and needs improvement in the future.
+Built originally for **Coding Thailand 2025 – Regional Competition**.
 
----
+## What works today
 
-## 🛠️ Requirements
-- Linux (Ubuntu/Debian recommended) or Windows with Python installed
-- Python **3.12 or 3.13**
-- Webcam or external camera
-- Git
+The Python backend:
 
----
+- Reads live video from a webcam.
+- Uses the YOLOv8 nano model to detect people and common vehicle classes.
+- Runs a traffic-light state machine with `GREEN`, `YELLOW`, `RED`, and pedestrian-transition flashing states.
+- Gives pedestrians priority: sustained person detection changes vehicle traffic from green to yellow, then red; the vehicle light returns to green only after no people are detected for a configured time.
+- Shows the annotated camera feed and simulated vehicle/pedestrian lights in an OpenCV window.
 
-## ⚙️ Setup instruction
+The frontend is being set up with React and Vite. It is currently a starter interface, not yet connected to the detection backend.
 
-### 1. **Clone the Repository**
-  - Clone default branch (main):
-    ```
-    git clone https://github.com/NineNights195/smart-traffic-light.git
-    ```
-  - To clone specific branch:
-    ```
-    git clone -b <branch-name> https://github.com/NineNights195/smart-traffic-light.git
-    ```
+## Project structure
 
-### 2. **Create Virtual Environment**
-  - Go to your repo
-    ```
-    cd <your repo directory>
-    ```
-  - Create virtual enviroment to avoids messing up system Python
-    ```
-    python -m venv venv
-    ```
-
-### 3. **Activate Virtual Environment**
-  - Windows:
-    ```bash
-    .\venv\Scripts\activate
-    ```
-  - macOS/Linux:
-    ```bash
-    source venv/bin/activate
-    ```
-
-### 4. Ensure pip is avaliable
-  - If pip is missing inside the venv, run:
-    ```
-    python -m ensurepip --upgrade
-    ```
-
-### 5. Upgrade pip, setuptools, and wheel
-```
-pip install --upgrade pip setuptools wheel
+```text
+smart-traffic-light/
+├── backend/
+│   ├── main.py              # Camera, YOLO detection, and light state machine
+│   ├── requirements.txt     # Python dependencies
+│   └── scripts/             # Small experiments and YOLO model file
+├── frontend/                # React + Vite dashboard (under development)
+└── README.md
 ```
 
-### 6. **Install Dependencies**
-  ```bash
-  pip install -r requirements.txt
-  ```
-  - Requirements dependencies
-    ```
-    opencv-python
-    numpy
-    torch
-    torchaudio
-    torchvision
-    ultralytics
-    ultralytics-thop
-    pandas
-    pillow
-    tqdm
-    ```
+## Run the backend
 
-### 7. Download YOLO model
-- Create a folder called models inside your project (if it doesn’t exist yet):
-  ```
-  mkdir -p models
-  ```
-- Download the YOLOv8 nano model (yolov8n.pt) into the models/ directory:
-  ```
-  wget -O models/yolov8n.pt https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt
-  ```
-  Alternatively, if wget is not available, use curl:
-  ```
-  curl -L -o models/yolov8n.pt https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt
-  ```
+### Requirements
 
-### 8. Test some scripts
-- Now you can test some scripts in scripts folder
-- Example the webcam-test.py
-  ```
-  python webcam-test.py
-  ```
-  Now it should work properly
-  
+- Python 3.12 or 3.13
+- A webcam or external camera
+- Windows, macOS, or Linux
+
+### Setup
+
+```bash
+git clone https://github.com/NineNights195/smart-traffic-light.git
+cd smart-traffic-light/backend
+python -m venv .venv
+```
+
+Activate the virtual environment:
+
+```bash
+# macOS / Linux
+source .venv/bin/activate
+
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
+```
+
+Install dependencies and start the prototype:
+
+```bash
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+python main.py
+```
+
+Press `q` in the OpenCV window to stop it.
+
+### Camera and model settings
+
+Before running, check the configuration at the top of `backend/main.py`:
+
+- `CAM_INDEX` — select the webcam index for the connected camera.
+- `MODEL_PATH` — the default model location is `models/yolov8n.pt`. Make sure the weights are available at that path, or update the setting to the checked-in model at `scripts/yolov8n.pt`.
+- `CONFIDENCE`, `PERSON_CONFIRM`, and `NO_PERSON_CONFIRM` — tune these values for the camera position and lighting conditions.
+
+## Run the frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+This starts the development server for the dashboard work. The backend API integration is a planned next step.
+
+## Roadmap
+
+- [ ] Replace the starter frontend with a live traffic-monitoring dashboard.
+- [ ] Expose detections and traffic-light state from the Python backend through an API.
+- [ ] Connect the dashboard to live camera, detection, and control data.
+- [ ] Improve detection accuracy across distance, occlusion, low light, and busy intersections.
+- [ ] Add test scenarios and safety rules for predictable light transitions.
+- [ ] Deploy the integrated system on Raspberry Pi and connect it to physical light hardware.
+
+## Notes
+
+This is an educational prototype and a simulation. It must not be used to control real public-road traffic without rigorous safety engineering, testing, and approval from the relevant authorities.
+
+## License
+
+See [LICENSE](LICENSE).  
