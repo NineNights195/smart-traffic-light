@@ -1,0 +1,10 @@
+# Optional dependencies for the preserved camera/YOLO prototype.
+# These are not required by app.api or the portfolio web simulation.
+-r requirements.txt
+
+# Python 3.14-compatible scientific and PyTorch versions.
+numpy==2.5.3
+opencv-python==5.0.0.93
+torch==2.10.0
+torchvision==0.25.0
+ultralytics==8.4.154
