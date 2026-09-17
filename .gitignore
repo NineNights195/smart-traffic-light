@@ -1,5 +1,6 @@
 # Python bytecode and cache
 __pycache__/
+.pytest_cache/
 *.pyc
 *.pyo
 *.pyd
@@ -8,8 +9,8 @@ __pycache__/
 *.DS_Store
 
 # Virtual environtments
-venv/
-env/
+.venv/
+.env/
 
 # Jupiter Notebook auto-save checkpoint
 .ipynb_checkpoints/
