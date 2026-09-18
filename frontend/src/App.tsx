@@ -1,39 +1,85 @@
-import { useCallback, useEffect, useState, type CSSProperties } from 'react'
+import { Component, useCallback, useEffect, useState, type CSSProperties } from 'react'
 import { simulationApi } from './api'
 import type { SimulationState } from './types'
 import './App.css'
 
 const POLL_INTERVAL_MS = 350
+const GOLDEN_ANGLE = 137.508
+
+interface VisualEntity {
+  id: number
+  hue: number
+}
+
+let nextVisualEntityId = 1
+
+function createVisualEntity(): VisualEntity {
+  const id = nextVisualEntityId++
+  return {
+    id,
+    hue: Math.round((id * GOLDEN_ANGLE) % 360),
+  }
+}
 
 function formatSeconds(value: number | null) {
   return value === null ? '—' : `${value.toFixed(1)}s`
 }
 
-function EntityStack({
-  count,
-  kind,
-  limit = 8,
-}: {
+interface EntityStackProps {
   count: number
   kind: 'car' | 'person'
   limit?: number
-}) {
-  const shown = Math.min(count, limit)
-  return (
-    <div className={`${kind}-stack`} aria-label={`${count} ${kind}s`}>
-      {Array.from({ length: shown }, (_, index) => (
-        <span
-          className={kind}
-          key={index}
-          style={{ '--entity-index': index } as CSSProperties}
-          aria-hidden="true"
-        >
-          <i /><b />
-        </span>
-      ))}
-      {count > limit && <span className="overflow-count">+{count - limit}</span>}
-    </div>
-  )
+}
+
+interface EntityStackState {
+  count: number
+  entities: VisualEntity[]
+}
+
+class EntityStack extends Component<EntityStackProps, EntityStackState> {
+  state: EntityStackState = {
+    count: this.props.count,
+    entities: Array.from({ length: this.props.count }, createVisualEntity),
+  }
+
+  static getDerivedStateFromProps(
+    props: EntityStackProps,
+    state: EntityStackState,
+  ): EntityStackState | null {
+    if (props.count === state.count) return null
+
+    const entities = [...state.entities]
+    const difference = props.count - state.count
+    if (difference > 0) {
+      entities.push(
+        ...Array.from({ length: difference }, createVisualEntity),
+      )
+    } else {
+      entities.splice(0, -difference)
+    }
+
+    return { count: props.count, entities }
+  }
+
+  render() {
+    const { count, kind, limit = 8 } = this.props
+    const shown = this.state.entities.slice(0, limit)
+    return (
+      <div className={`${kind}-stack`} aria-label={`${count} ${kind}s`}>
+        {shown.map((entity) => (
+          <span
+            className={kind}
+            key={entity.id}
+            style={{ '--entity-hue': entity.hue } as CSSProperties}
+            aria-hidden="true"
+          >
+            <i /><b />
+          </span>
+        ))}
+        {count > limit && <span className="overflow-count">+{count - limit}</span>}
+      </div>
+    )
+  }
 }
 
 function VehicleSignal({ active }: { active: SimulationState['vehicle_light'] }) {

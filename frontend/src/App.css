@@ -45,7 +45,7 @@
 .lane-label { position: absolute; left: 24px; top: 14px; color: #ffffff55; font: 10px 'DM Mono', monospace; letter-spacing: .14em; }
 .direction { position: absolute; left: 17px; bottom: 13px; color: #ffffff33; font-size: 25px; }
 .car-stack { display: flex; flex-direction: row-reverse; gap: 15px; align-items: center; padding-right: 43%; width: 100%; justify-content: flex-start; }
-.car { position: relative; width: 52px; height: 27px; flex: 0 0 auto; border-radius: 8px 12px 6px 6px; background: hsl(calc(184 + var(--entity-index) * 36) 57% 53%); border: 2px solid #15191b; box-shadow: -5px 7px 8px #0005; }
+.car { position: relative; width: 52px; height: 27px; flex: 0 0 auto; border-radius: 8px 12px 6px 6px; background: hsl(var(--entity-hue) 66% 56%); border: 2px solid #15191b; box-shadow: -5px 7px 8px #0005; }
 .car i { position: absolute; left: 12px; top: 3px; width: 22px; height: 11px; border-radius: 4px; background: #16252ca8; }
 .car b, .car::after { content: ''; position: absolute; width: 9px; height: 5px; bottom: -5px; background: #0c0e0f; border-radius: 0 0 4px 4px; }
 .car b { left: 6px; } .car::after { right: 6px; }
@@ -57,7 +57,7 @@
 .person-stack { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; }
 .person { position: relative; z-index: 4; width: 15px; height: 28px; display: inline-block; }
 .person::before { content: ''; position: absolute; left: 4px; top: 0; width: 8px; height: 8px; border-radius: 50%; background: #f1bd8e; border: 1px solid #101214; }
-.person i { position: absolute; left: 3px; top: 9px; width: 10px; height: 11px; border-radius: 5px 5px 2px 2px; background: hsl(calc(45 + var(--entity-index) * 55) 72% 61%); border: 1px solid #101214; }
+.person i { position: absolute; left: 3px; top: 9px; width: 10px; height: 11px; border-radius: 5px 5px 2px 2px; background: hsl(var(--entity-hue) 76% 61%); border: 1px solid #101214; }
 .person b, .person::after { content: ''; position: absolute; top: 19px; width: 4px; height: 9px; background: #d9e1e5; border: 1px solid #101214; }
 .person b { left: 3px; transform: rotate(8deg); } .person::after { right: 2px; transform: rotate(-8deg); }
 
