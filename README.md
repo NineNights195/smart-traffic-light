@@ -60,7 +60,7 @@ The `SensorAdapter` protocol is the seam for a future camera adapter. A camera i
 ```mermaid
 stateDiagram-v2
     [*] --> VEHICLE_GREEN
-    VEHICLE_GREEN --> VEHICLE_YELLOW: confirmed waiting-zone request\nand MIN_GREEN met
+    VEHICLE_GREEN --> VEHICLE_YELLOW: confirmed waiting-zone request\nand active green target elapsed
     VEHICLE_YELLOW --> ALL_RED_TO_PED: YELLOW_DURATION
     ALL_RED_TO_PED --> PED_WALK: all-red buffer complete
     PED_WALK --> PED_CLEARANCE: confirmed clear zones after minimum walk\nor MAX_PED_WALK
@@ -135,9 +135,9 @@ All values live in `backend/app/config.py` as `TrafficConfig`.
 
 | Setting | Default | Meaning |
 | --- | ---: | --- |
-| `MIN_GREEN` | 5 s | Minimum vehicle green before serving a pedestrian request |
-| `MAX_GREEN` | 20 s | Upper bound for calculated target green |
-| `TIME_PER_VEHICLE` | 3 s | Added target green per queued vehicle |
+| `MIN_GREEN` | 5 s | Base duration for each fixed vehicle-green service window |
+| `MAX_GREEN` | 20 s | Hard upper bound for the active green window |
+| `TIME_PER_VEHICLE` | 1 s | Service time per starting vehicle; also the simulated vehicle discharge interval |
 | `PERSON_CONFIRM` | 1.5 s | Continuous waiting-zone presence required |
 | `NO_PERSON_CONFIRM` | 1.5 s | Continuous empty controlled zones required |
 | `YELLOW_DURATION` | 3 s | Fixed vehicle yellow interval |
@@ -154,8 +154,10 @@ All values live in `backend/app/config.py` as `TrafficConfig`.
 Target green is calculated as:
 
 ```text
-clamp(MIN_GREEN + total_vehicle_queue × TIME_PER_VEHICLE, MIN_GREEN, MAX_GREEN)
+clamp(total_vehicle_queue × TIME_PER_VEHICLE, MIN_GREEN, MAX_GREEN)
 ```
+
+The initial target is captured when the controller enters `VEHICLE_GREEN`. If more cars arrive, the target grows only enough to serve the remaining queue at the one-second discharge rate. Small and medium arrivals can therefore pass during the active green, while the twenty-second maximum is a hard cap that prevents a large or continuous queue from indefinitely delaying a confirmed pedestrian request. The target never shrinks during a green phase.
 
 Pedestrian clearance is independent of pedestrian count:
 
@@ -168,8 +170,8 @@ The simulation's configurable sensor-fault fallback is vehicle `RED`, pedestrian
 ## Demo walkthrough
 
 1. Start both servers and open the dashboard.
-2. Add several vehicles to each lane. Their queue counts increase and the green target can extend, bounded by `MAX_GREEN`; waiting vehicles leave while green.
-3. Add a pedestrian. The backend confirms continuous waiting-zone presence and the minimum green time.
+2. Add several vehicles to each lane. The vehicle-green target starts from the initial queue and can grow for new arrivals, but never beyond `MAX_GREEN`; waiting vehicles leave while green.
+3. Add a pedestrian. The backend confirms continuous waiting-zone presence, then waits for the active green target to finish before changing the signal.
 4. Watch the exact sequence `VEHICLE_YELLOW → ALL_RED_TO_PED → PED_WALK`.
 5. Observe the person move from the waiting zone to the crosswalk. The backend eventually enters `PED_CLEARANCE`, where the pedestrian signal flashes `DONT_WALK` for the distance-based duration.
 6. Select **Simulate fault**. Both signals use the fallback and all movement freezes.

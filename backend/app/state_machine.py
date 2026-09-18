@@ -36,10 +36,7 @@ class StateMachine:
         self.transition_reason = "Simulation reset"
 
     def calculate_target_green(self, *, total_vehicle_queue: int) -> float:
-        requested = (
-            self.config.min_green
-            + total_vehicle_queue * self.config.time_per_vehicle
-        )
+        requested = total_vehicle_queue * self.config.time_per_vehicle
         return min(self.config.max_green, max(self.config.min_green, requested))
 
     def update(
@@ -70,12 +67,15 @@ class StateMachine:
             return self.current_state(snapshot=snapshot, now=now)
 
         if self.phase is Phase.VEHICLE_GREEN:
-            requested_green = self.calculate_target_green(
-                total_vehicle_queue=snapshot.total_vehicle_queue
+            elapsed = now - self.phase_started_at
+            queue_clearance_target = min(
+                self.config.max_green,
+                elapsed
+                + snapshot.total_vehicle_queue * self.config.time_per_vehicle,
             )
-            # A growing queue may extend the active green, but never shorten it.
             self.target_green_duration = max(
-                self.target_green_duration, requested_green
+                self.target_green_duration,
+                queue_clearance_target,
             )
 
             if snapshot.people_waiting_zone > 0:
@@ -85,14 +85,17 @@ class StateMachine:
                     now - self.person_detect_started_at
                     >= self.config.person_confirm
                 )
-                minimum_green_met = (
-                    now - self.phase_started_at >= self.config.min_green
+                green_window_complete = (
+                    now - self.phase_started_at >= self.target_green_duration
                 )
-                if confirmed and minimum_green_met:
+                if confirmed and green_window_complete:
                     self._transition(
                         to=Phase.VEHICLE_YELLOW,
                         now=now,
-                        reason="Waiting-zone pedestrian request confirmed",
+                        reason=(
+                            "Vehicle-green service window completed for "
+                            "confirmed pedestrian request"
+                        ),
                     )
             else:
                 self.person_detect_started_at = None
@@ -258,4 +261,3 @@ class StateMachine:
         if duration is None:
             return None
         return max(0.0, duration - elapsed)
-

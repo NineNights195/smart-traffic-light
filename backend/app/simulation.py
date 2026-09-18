@@ -129,7 +129,7 @@ class SimulationService:
             return
         intervals = int(
             (now - self.last_vehicle_release_at)
-            / self.config.vehicle_discharge_interval
+            / self.config.time_per_vehicle
         )
         if intervals <= 0:
             return
@@ -145,7 +145,7 @@ class SimulationService:
                 break
             self.sensor.vehicle_queue_by_lane[lane] -= 1
         self.last_vehicle_release_at += (
-            intervals * self.config.vehicle_discharge_interval
+            intervals * self.config.time_per_vehicle
         )
 
     def _advance_pedestrians(self, *, now: float, phase: Phase) -> None:

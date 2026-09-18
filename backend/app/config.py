@@ -3,8 +3,8 @@ from math import ceil
 
 
 MIN_GREEN = 5.0
-MAX_GREEN = 20.0
-TIME_PER_VEHICLE = 3.0
+MAX_GREEN = 15.0
+TIME_PER_VEHICLE = 1.0
 PERSON_CONFIRM = 1.5
 NO_PERSON_CONFIRM = 1.5
 YELLOW_DURATION = 3.0
@@ -37,7 +37,6 @@ class TrafficConfig:
     walking_speed_mps: float = WALKING_SPEED_MPS
     flash_interval: float = FLASH_INTERVAL
     sensor_max_age: float = SENSOR_MAX_AGE
-    vehicle_discharge_interval: float = 1.0
     pedestrian_entry_delay: float = PEDESTRIAN_ENTRY_DELAY
 
     # Simulation policy, not a standard for real road infrastructure.

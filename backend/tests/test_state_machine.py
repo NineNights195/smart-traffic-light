@@ -3,7 +3,13 @@ from dataclasses import replace
 import pytest
 
 from app.config import TrafficConfig
-from app.models import PedestrianSignal, Phase, SensorSnapshot, VehicleLight
+from app.models import (
+    ControllerState,
+    PedestrianSignal,
+    Phase,
+    SensorSnapshot,
+    VehicleLight,
+)
 from app.state_machine import StateMachine
 
 
@@ -38,6 +44,25 @@ def enter_ped_walk(machine: StateMachine) -> None:
     assert machine.phase is Phase.PED_WALK
 
 
+def enter_vehicle_green_after_ped_cycle(
+    machine: StateMachine,
+    *,
+    queued_vehicles: int,
+) -> ControllerState:
+    enter_ped_walk(machine)
+    machine.update(snapshot=snapshot(now=13), now=13)
+    machine.update(snapshot=snapshot(now=14.5), now=14.5)
+    assert machine.phase is Phase.PED_CLEARANCE
+    machine.update(snapshot=snapshot(now=20.5), now=20.5)
+    assert machine.phase is Phase.ALL_RED_TO_VEHICLE
+    state = machine.update(
+        snapshot=snapshot(now=21.5, lane_1=queued_vehicles),
+        now=21.5,
+    )
+    assert machine.phase is Phase.VEHICLE_GREEN
+    return state
+
+
 def test_initial_state_is_vehicle_green() -> None:
     machine = StateMachine(now=10)
 
@@ -67,7 +92,7 @@ def test_single_detection_frame_does_not_change_phase() -> None:
     assert state.phase is Phase.VEHICLE_GREEN
 
 
-def test_person_confirm_and_minimum_green_are_both_required() -> None:
+def test_person_confirm_and_green_target_are_both_required() -> None:
     machine = StateMachine(now=0)
 
     machine.update(snapshot=snapshot(now=0, waiting=1), now=0)
@@ -84,7 +109,7 @@ def test_vehicles_and_people_still_pass_through_yellow() -> None:
     machine = StateMachine(now=0)
 
     machine.update(snapshot=snapshot(now=0, waiting=1, lane_1=5), now=0)
-    state = machine.update(snapshot=snapshot(now=5, waiting=1, lane_1=5), now=5)
+    state = machine.update(snapshot=snapshot(now=5, waiting=1), now=5)
 
     assert state.phase is Phase.VEHICLE_YELLOW
     assert state.vehicle_light is VehicleLight.YELLOW
@@ -151,28 +176,91 @@ def test_no_person_confirmation_resets_when_a_person_reappears() -> None:
 
 @pytest.mark.parametrize(
     ("queue", "expected"),
-    [(0, 5), (1, 8), (3, 14), (5, 20), (100, 20)],
+    [(0, 5), (1, 5), (3, 5), (5, 5), (10, 10), (100, 20)],
 )
 def test_queue_controls_bounded_green_target(queue: int, expected: float) -> None:
     machine = StateMachine(now=0)
 
-    state = machine.update(
-        snapshot=snapshot(now=0, lane_1=queue),
-        now=0,
+    target = machine.calculate_target_green(
+        total_vehicle_queue=queue,
     )
 
-    assert state.target_green_duration == expected
-    assert 5 <= state.target_green_duration <= 20
+    assert target == expected
+    assert 5 <= target <= 20
 
 
-def test_green_target_can_extend_but_does_not_shrink() -> None:
+def test_new_vehicle_queue_extends_green_target_up_to_maximum() -> None:
     machine = StateMachine(now=0)
 
-    extended = machine.update(snapshot=snapshot(now=1, lane_1=4), now=1)
-    reduced_queue = machine.update(snapshot=snapshot(now=2), now=2)
+    started = enter_vehicle_green_after_ped_cycle(
+        machine,
+        queued_vehicles=3,
+    )
+    medium_arrival = machine.update(
+        snapshot=snapshot(now=23.5, lane_2=5),
+        now=23.5,
+    )
+    large_arrival = machine.update(
+        snapshot=snapshot(now=24.5, lane_2=100),
+        now=24.5,
+    )
 
-    assert extended.target_green_duration == 17
-    assert reduced_queue.target_green_duration == 17
+    assert started.target_green_duration == 5
+    assert medium_arrival.target_green_duration == 7
+    assert large_arrival.target_green_duration == 20
+
+
+def test_pedestrian_waits_for_green_target_before_transition() -> None:
+    machine = StateMachine(now=0)
+    started = enter_vehicle_green_after_ped_cycle(
+        machine,
+        queued_vehicles=10,
+    )
+
+    machine.update(snapshot=snapshot(now=22, waiting=1), now=22)
+    after_minimum = machine.update(
+        snapshot=snapshot(now=26.5, waiting=1),
+        now=26.5,
+    )
+    before_target = machine.update(
+        snapshot=snapshot(now=31.4, waiting=1),
+        now=31.4,
+    )
+    target_complete = machine.update(
+        snapshot=snapshot(now=31.5, waiting=1),
+        now=31.5,
+    )
+
+    assert started.target_green_duration == 10
+    assert after_minimum.phase is Phase.VEHICLE_GREEN
+    assert before_target.phase is Phase.VEHICLE_GREEN
+    assert target_complete.phase is Phase.VEHICLE_YELLOW
+
+
+def test_new_cars_delay_pedestrian_only_long_enough_to_clear_queue() -> None:
+    machine = StateMachine(now=0)
+    enter_vehicle_green_after_ped_cycle(
+        machine,
+        queued_vehicles=3,
+    )
+
+    machine.update(snapshot=snapshot(now=22, waiting=1), now=22)
+    extended = machine.update(
+        snapshot=snapshot(now=26, waiting=1, lane_1=3),
+        now=26,
+    )
+    before_extended_target = machine.update(
+        snapshot=snapshot(now=28.9, waiting=1),
+        now=28.9,
+    )
+    target_complete = machine.update(
+        snapshot=snapshot(now=29, waiting=1),
+        now=29,
+    )
+
+    assert extended.target_green_duration == 7.5
+    assert before_extended_target.phase is Phase.VEHICLE_GREEN
+    assert target_complete.phase is Phase.VEHICLE_YELLOW
 
 
 @pytest.mark.parametrize(
@@ -208,4 +296,3 @@ def test_sensor_recovery_uses_all_red_buffer_before_green() -> None:
     assert recovered.vehicle_light is VehicleLight.RED
     assert still_buffering.phase is Phase.ALL_RED_TO_VEHICLE
     assert green.phase is Phase.VEHICLE_GREEN
-
