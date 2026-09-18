@@ -16,6 +16,23 @@ A software-focused, full-stack traffic-light simulation for a portfolio and clas
 
 The camera/YOLO proof of concept remains in `backend/main.py`. It is not imported by the simulation API, so starting the web version does not open a camera or download a model.
 
+## Quick start
+
+Python 3 and npm are the only prerequisites. From the repository root, run:
+
+```bash
+./run.sh
+```
+
+The script automatically:
+
+- Creates and activates `backend/.venv` if it does not exist.
+- Installs the backend packages from `backend/requirements.txt`.
+- Installs the frontend packages from `frontend/package.json` and `frontend/package-lock.json`.
+- Starts FastAPI at `http://127.0.0.1:8000` and Vite at `http://127.0.0.1:5173`.
+
+Open `http://127.0.0.1:5173`, and press `Ctrl+C` in the terminal to stop both servers. Dependency installation is safe to run again, so the same command can be used after pulling dependency updates.
+
 ## Architecture
 
 ```text
@@ -60,7 +77,7 @@ stateDiagram-v2
 
 `PED_CLEARANCE` is the top-level clearance phase. Flashing is a pedestrian-signal behavior (`FLASHING_DONT_WALK`), never a separate `FLASHING` phase.
 
-## Run the backend
+## Run the backend manually
 
 Python 3.14.7 is supported and used for verification.
 
@@ -89,7 +106,7 @@ The vision file uses a Python 3.14-compatible PyTorch pair (`torch 2.10` and
 `torchvision 0.25`). It is outside the web-simulation runtime and is not needed
 to run the portfolio milestone.
 
-## Run the frontend
+## Run the frontend manually
 
 In a second terminal:
 
