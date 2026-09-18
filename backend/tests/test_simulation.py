@@ -87,3 +87,29 @@ def test_waiting_pedestrians_move_to_crosswalk_during_walk_phase() -> None:
     assert walking["people_waiting_zone"] == 0
     assert walking["people_on_crosswalk"] == 2
 
+
+def test_pedestrians_added_during_walk_wait_before_entering_crosswalk() -> None:
+    clock = FakeClock()
+    simulation = SimulationService(clock=clock)
+    simulation.add_pedestrians(zone="waiting_left", count=2)
+
+    clock.advance(5)
+    simulation.state()
+    clock.advance(3)
+    simulation.state()
+    clock.advance(1)
+    simulation.state()
+
+    added_during_walk = simulation.add_pedestrians(zone="waiting_right", count=1)
+    clock.advance(1.4)
+    still_waiting = simulation.state()
+    clock.advance(0.1)
+    joined_crosswalk = simulation.state()
+
+    assert added_during_walk["phase"] == Phase.PED_WALK.value
+    assert added_during_walk["people_waiting_zone"] == 1
+    assert added_during_walk["people_on_crosswalk"] == 2
+    assert still_waiting["people_waiting_zone"] == 1
+    assert still_waiting["people_on_crosswalk"] == 2
+    assert joined_crosswalk["people_waiting_zone"] == 0
+    assert joined_crosswalk["people_on_crosswalk"] == 3

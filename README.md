@@ -149,6 +149,7 @@ All values live in `backend/app/config.py` as `TrafficConfig`.
 | `WALKING_SPEED_MPS` | 1.0 m/s | Demonstration walking speed |
 | `FLASH_INTERVAL` | 0.5 s | Pedestrian clearance flash cadence |
 | `SENSOR_MAX_AGE` | 2 s | Maximum sensor snapshot age |
+| `PEDESTRIAN_ENTRY_DELAY` | 1.5 s | Waiting-zone delay before a newly added pedestrian enters an active walk phase |
 
 Target green is calculated as:
 
