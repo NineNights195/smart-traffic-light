@@ -82,22 +82,33 @@ class EntityStack extends Component<EntityStackProps, EntityStackState> {
   }
 }
 
-function VehicleSignal({ active }: { active: SimulationState['vehicle_light'] }) {
+function VehicleSignal({ state }: { state: SimulationState }) {
   return (
-    <div className="vehicle-signal" aria-label={`Vehicle light ${active}`}>
+    <div className="vehicle-signal" aria-label={`Vehicle light ${state.vehicle_light}`}>
       {(['RED', 'YELLOW', 'GREEN'] as const).map((light) => (
-        <span key={light} className={`bulb ${light.toLowerCase()} ${active === light ? 'active' : ''}`} />
+        <span
+          key={light}
+          className={`bulb ${light.toLowerCase()} ${
+            state.vehicle_light === light
+            || (state.vehicle_light === 'FLASHING_YELLOW'
+              && light === 'YELLOW'
+              && state.flash_on)
+              ? 'active'
+              : ''
+          }`}
+        />
       ))}
     </div>
   )
 }
 
 function PedestrianLight({ state }: { state: SimulationState }) {
-  const illuminated =
-    state.pedestrian_signal !== 'FLASHING_DONT_WALK' || state.flash_on
+  const stopIlluminated =
+    state.pedestrian_signal === 'DONT_WALK'
+    || (state.pedestrian_signal === 'FLASHING_DONT_WALK' && state.flash_on)
   return (
     <div className="pedestrian-light" aria-label={`Pedestrian signal ${state.pedestrian_signal}`}>
-      <span className={`ped-icon stop ${state.pedestrian_signal !== 'WALK' && illuminated ? 'active' : ''}`}>✋</span>
+      <span className={`ped-icon stop ${stopIlluminated ? 'active' : ''}`}>✋</span>
       <span className={`ped-icon walk ${state.pedestrian_signal === 'WALK' ? 'active' : ''}`}>●</span>
     </div>
   )
@@ -123,7 +134,7 @@ function Intersection({ state }: { state: SimulationState }) {
         </div>
 
         <div className="signal-cluster">
-          <VehicleSignal active={state.vehicle_light} />
+          <VehicleSignal state={state} />
           <PedestrianLight state={state} />
         </div>
 
@@ -233,7 +244,7 @@ function App() {
       {state.phase === 'SENSOR_FAULT' && (
         <div className="fault-banner" role="alert">
           <strong>Sensor fault safety fallback active</strong>
-          <span>All movement is frozen. Vehicle RED · Pedestrian DONT WALK</span>
+          <span>All movement is frozen. Vehicle FLASHING YELLOW · Pedestrian OFF</span>
         </div>
       )}
 

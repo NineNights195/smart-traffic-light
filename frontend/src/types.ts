@@ -7,8 +7,9 @@ export type Phase =
   | 'ALL_RED_TO_VEHICLE'
   | 'SENSOR_FAULT'
 
-export type VehicleLight = 'RED' | 'YELLOW' | 'GREEN'
+export type VehicleLight = 'RED' | 'YELLOW' | 'GREEN' | 'FLASHING_YELLOW'
 export type PedestrianSignal =
+  | 'OFF'
   | 'DONT_WALK'
   | 'WALK'
   | 'FLASHING_DONT_WALK'
@@ -33,4 +34,3 @@ export interface SimulationState {
   sensor_available: boolean
   captured_at: number
 }
-

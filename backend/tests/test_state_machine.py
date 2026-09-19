@@ -323,8 +323,24 @@ def test_missing_unavailable_or_stale_sensor_enters_fault(
     state = machine.update(snapshot=bad_snapshot, now=now)
 
     assert state.phase is Phase.SENSOR_FAULT
-    assert state.vehicle_light is VehicleLight.RED
-    assert state.pedestrian_signal is PedestrianSignal.DONT_WALK
+    assert state.vehicle_light is VehicleLight.FLASHING_YELLOW
+    assert state.pedestrian_signal is PedestrianSignal.OFF
+
+
+def test_sensor_fault_flashes_vehicle_yellow() -> None:
+    machine = StateMachine(now=0)
+
+    flash_on = machine.update(
+        snapshot=snapshot(now=0, available=False),
+        now=0,
+    )
+    flash_off = machine.update(
+        snapshot=snapshot(now=0.5, available=False),
+        now=0.5,
+    )
+
+    assert flash_on.flash_on is True
+    assert flash_off.flash_on is False
 
 
 def test_sensor_recovery_uses_all_red_buffer_before_green() -> None:

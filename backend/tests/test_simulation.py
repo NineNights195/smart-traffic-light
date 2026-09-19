@@ -36,8 +36,8 @@ def test_sensor_fault_freezes_entities_and_uses_fallback() -> None:
     still_faulted = simulation.state()
 
     assert fault["phase"] == Phase.SENSOR_FAULT.value
-    assert fault["vehicle_light"] == "RED"
-    assert fault["pedestrian_signal"] == "DONT_WALK"
+    assert fault["vehicle_light"] == "FLASHING_YELLOW"
+    assert fault["pedestrian_signal"] == "OFF"
     assert still_faulted["vehicle_queue_by_lane"] == {"1": 2, "2": 0}
 
 

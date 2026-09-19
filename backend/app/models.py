@@ -19,9 +19,11 @@ class VehicleLight(str, Enum):
     RED = "RED"
     YELLOW = "YELLOW"
     GREEN = "GREEN"
+    FLASHING_YELLOW = "FLASHING_YELLOW"
 
 
 class PedestrianSignal(str, Enum):
+    OFF = "OFF"
     DONT_WALK = "DONT_WALK"
     WALK = "WALK"
     FLASHING_DONT_WALK = "FLASHING_DONT_WALK"
@@ -66,4 +68,3 @@ class ControllerState:
     sensor_status: str
     sensor_age: float | None
     flash_on: bool
-

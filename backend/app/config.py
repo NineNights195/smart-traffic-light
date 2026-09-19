@@ -40,8 +40,8 @@ class TrafficConfig:
     pedestrian_entry_delay: float = PEDESTRIAN_ENTRY_DELAY
 
     # Simulation policy, not a standard for real road infrastructure.
-    sensor_fault_vehicle_light: str = "RED"
-    sensor_fault_pedestrian_signal: str = "DONT_WALK"
+    sensor_fault_vehicle_light: str = "FLASHING_YELLOW"
+    sensor_fault_pedestrian_signal: str = "OFF"
     freeze_movement_on_sensor_fault: bool = True
 
     @property

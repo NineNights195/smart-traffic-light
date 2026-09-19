@@ -24,6 +24,7 @@
 .intersection { position: relative; min-height: 510px; padding: 92px 0 68px; background: radial-gradient(circle at 76% 16%, #263037 0, transparent 26%), linear-gradient(135deg, #171d20, #0d1113); overflow: hidden; }
 .intersection::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(#ffffff05 1px, transparent 1px), linear-gradient(90deg, #ffffff05 1px, transparent 1px); background-size: 28px 28px; }
 .intersection.frozen::after { content: 'SENSOR FAULT'; position: absolute; inset: 0; display: grid; place-items: center; color: #ff6a63; background: #120b0bcc; font: 500 clamp(30px, 5vw, 64px) 'DM Mono', monospace; letter-spacing: .16em; z-index: 20; }
+.intersection.frozen .signal-cluster { z-index: 21; }
 .waiting-zone { position: absolute; top: 18px; left: 19%; width: 210px; min-height: 60px; padding: 9px 12px; border: 1px dashed #6b767d; border-radius: 4px; background: #20272baa; z-index: 4; }
 .zone-label { display: block; margin-bottom: 5px; color: #9ca6ac; font: 9px 'DM Mono', monospace; letter-spacing: .12em; text-transform: uppercase; }
 .signal-cluster { position: absolute; z-index: 8; top: 22px; right: 7%; display: flex; align-items: flex-end; gap: 10px; }

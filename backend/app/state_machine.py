@@ -208,7 +208,7 @@ class StateMachine:
         sensor_error = self._sensor_error(snapshot=snapshot, now=now)
         vehicle_light, pedestrian_signal = self._signals()
         flash_on = (
-            self.phase is Phase.PED_CLEARANCE
+            self.phase in {Phase.PED_CLEARANCE, Phase.SENSOR_FAULT}
             and int(elapsed / self.config.flash_interval) % 2 == 0
         )
         return ControllerState(
@@ -262,6 +262,8 @@ class StateMachine:
             )
 
     def _signals(self) -> tuple[VehicleLight, PedestrianSignal]:
+        if self.phase is Phase.SENSOR_FAULT:
+            return VehicleLight.FLASHING_YELLOW, PedestrianSignal.OFF
         if self.phase is Phase.VEHICLE_GREEN:
             return VehicleLight.GREEN, PedestrianSignal.DONT_WALK
         if self.phase is Phase.VEHICLE_YELLOW:

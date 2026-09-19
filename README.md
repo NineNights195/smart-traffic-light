@@ -12,7 +12,7 @@ A software-focused, full-stack traffic-light simulation for a portfolio and clas
 - Confirmed presence/absence timers that reject a single noisy detection frame.
 - Distance-based pedestrian clearance with flashing `DONT_WALK`.
 - A configurable fail-safe simulation policy for missing, unavailable, or stale sensor data.
-- Recovery from `SENSOR_FAULT` through an all-red buffer before vehicle green.
+- Flashing-yellow vehicle and disabled pedestrian signals during `SENSOR_FAULT`, followed by an all-red recovery buffer before vehicle green.
 
 The camera/YOLO proof of concept remains in `backend/main.py`. It is not imported by the simulation API, so starting the web version does not open a camera or download a model.
 
@@ -165,7 +165,7 @@ Pedestrian clearance is independent of pedestrian count:
 ceil(CROSSWALK_DISTANCE_M / WALKING_SPEED_MPS)
 ```
 
-The simulation's configurable sensor-fault fallback is vehicle `RED`, pedestrian `DONT_WALK`, and frozen vehicle/pedestrian movement. This is a project policy for demonstrating fault handling, **not a universal or standards-based public-road policy**.
+The simulation's configurable sensor-fault fallback is vehicle `FLASHING_YELLOW`, pedestrian `OFF`, and frozen vehicle/pedestrian movement. This is a project policy for demonstrating fault handling, **not a universal or standards-based public-road policy**.
 
 ## Demo walkthrough
 
