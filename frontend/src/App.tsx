@@ -255,6 +255,7 @@ function App() {
 
   return (
     <main className="app-shell">
+      <title>Smart Traffic Light Simulation</title>
       <header className="topbar">
         <div className="brand-mark" aria-hidden="true"><i /><i /><i /></div>
         <div>
