@@ -60,10 +60,10 @@ The `SensorAdapter` protocol is the seam for a future camera adapter. A camera i
 ```mermaid
 stateDiagram-v2
     [*] --> VEHICLE_GREEN
-    VEHICLE_GREEN --> VEHICLE_YELLOW: confirmed waiting-zone request\nand active green target elapsed
+    VEHICLE_GREEN --> VEHICLE_YELLOW: confirmed waiting-zone request and active green target elapsed
     VEHICLE_YELLOW --> ALL_RED_TO_PED: YELLOW_DURATION
     ALL_RED_TO_PED --> PED_WALK: all-red buffer complete
-    PED_WALK --> PED_CLEARANCE: confirmed clear zones after minimum walk\nor MAX_PED_WALK when vehicle demand exists
+    PED_WALK --> PED_CLEARANCE: confirmed clear zones after minimum walk or MAX_PED_WALK when vehicle demand exists
     PED_CLEARANCE --> ALL_RED_TO_VEHICLE: distance-based clearance complete
     ALL_RED_TO_VEHICLE --> VEHICLE_GREEN: all-red buffer complete
     VEHICLE_GREEN --> SENSOR_FAULT: invalid sensor health
