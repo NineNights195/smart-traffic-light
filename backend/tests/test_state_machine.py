@@ -175,6 +175,49 @@ def test_no_person_confirmation_resets_when_a_person_reappears() -> None:
 
 
 @pytest.mark.parametrize(
+    ("waiting", "crossing"),
+    [(1, 0), (0, 1), (1, 1)],
+)
+def test_ped_walk_stays_active_after_timeout_until_a_vehicle_appears(
+    waiting: int,
+    crossing: int,
+) -> None:
+    machine = StateMachine(now=0)
+    enter_ped_walk(machine)
+
+    timed_out = machine.update(
+        snapshot=snapshot(now=39, waiting=waiting, crossing=crossing),
+        now=39,
+    )
+    still_walking = machine.update(snapshot=snapshot(now=45), now=45)
+    vehicle_arrived = machine.update(
+        snapshot=snapshot(now=46, lane_1=1),
+        now=46,
+    )
+
+    assert timed_out.phase is Phase.PED_WALK
+    assert timed_out.time_remaining == 0
+    assert (
+        timed_out.transition_reason
+        == "Pedestrian walk extended until a vehicle is detected"
+    )
+    assert still_walking.phase is Phase.PED_WALK
+    assert vehicle_arrived.phase is Phase.PED_CLEARANCE
+
+
+def test_ped_walk_timeout_still_applies_when_a_vehicle_is_waiting() -> None:
+    machine = StateMachine(now=0)
+    enter_ped_walk(machine)
+
+    state = machine.update(
+        snapshot=snapshot(now=39, waiting=1, crossing=1, lane_1=1),
+        now=39,
+    )
+
+    assert state.phase is Phase.PED_CLEARANCE
+
+
+@pytest.mark.parametrize(
     ("queue", "expected"),
     [(0, 5), (1, 5), (3, 5), (5, 5), (10, 10), (100, 20)],
 )

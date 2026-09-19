@@ -63,7 +63,7 @@ stateDiagram-v2
     VEHICLE_GREEN --> VEHICLE_YELLOW: confirmed waiting-zone request\nand active green target elapsed
     VEHICLE_YELLOW --> ALL_RED_TO_PED: YELLOW_DURATION
     ALL_RED_TO_PED --> PED_WALK: all-red buffer complete
-    PED_WALK --> PED_CLEARANCE: confirmed clear zones after minimum walk\nor MAX_PED_WALK
+    PED_WALK --> PED_CLEARANCE: confirmed clear zones after minimum walk\nor MAX_PED_WALK when vehicle demand exists
     PED_CLEARANCE --> ALL_RED_TO_VEHICLE: distance-based clearance complete
     ALL_RED_TO_VEHICLE --> VEHICLE_GREEN: all-red buffer complete
     VEHICLE_GREEN --> SENSOR_FAULT: invalid sensor health
@@ -144,7 +144,7 @@ All values live in `backend/app/config.py` as `TrafficConfig`.
 | `ALL_RED_TO_PED_DURATION` | 1 s | Buffer before pedestrian walk |
 | `ALL_RED_TO_VEHICLE_DURATION` | 1 s | Buffer before vehicle green |
 | `MIN_PED_WALK` | 4 s | Minimum pedestrian walk interval |
-| `MAX_PED_WALK` | 30 s | Guard against a permanently occupied phase |
+| `MAX_PED_WALK` | 30 s | Ends an occupied walk phase when vehicle demand exists; otherwise walk remains active until a car arrives |
 | `CROSSWALK_DISTANCE_M` | 6 m | Crossing distance used for clearance |
 | `WALKING_SPEED_MPS` | 1.0 m/s | Demonstration walking speed |
 | `FLASH_INTERVAL` | 0.5 s | Pedestrian clearance flash cadence |

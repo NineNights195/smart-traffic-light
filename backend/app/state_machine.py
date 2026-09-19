@@ -25,6 +25,7 @@ class StateMachine:
         self.target_green_duration = config.min_green
         self.person_detect_started_at: float | None = None
         self.no_person_started_at: float | None = None
+        self.ped_walk_waiting_for_vehicle = False
         self.transition_reason = "Controller initialized with vehicle green"
 
     def reset(self, *, now: float) -> None:
@@ -33,6 +34,7 @@ class StateMachine:
         self.target_green_duration = self.config.min_green
         self.person_detect_started_at = None
         self.no_person_started_at = None
+        self.ped_walk_waiting_for_vehicle = False
         self.transition_reason = "Simulation reset"
 
     def calculate_target_green(self, *, total_vehicle_queue: int) -> float:
@@ -122,11 +124,32 @@ class StateMachine:
         elif self.phase is Phase.PED_WALK:
             elapsed = now - self.phase_started_at
             if elapsed >= self.config.max_ped_walk:
-                self._transition(
-                    to=Phase.PED_CLEARANCE,
-                    now=now,
-                    reason="Maximum pedestrian walk guard reached",
+                pedestrians_present = (
+                    snapshot.people_waiting_zone > 0
+                    or snapshot.people_on_crosswalk > 0
                 )
+                vehicles_present = snapshot.total_vehicle_queue > 0
+                if self.ped_walk_waiting_for_vehicle:
+                    if vehicles_present:
+                        self._transition(
+                            to=Phase.PED_CLEARANCE,
+                            now=now,
+                            reason=(
+                                "Vehicle detected after extended pedestrian "
+                                "walk"
+                            ),
+                        )
+                elif pedestrians_present and not vehicles_present:
+                    self.ped_walk_waiting_for_vehicle = True
+                    self.transition_reason = (
+                        "Pedestrian walk extended until a vehicle is detected"
+                    )
+                else:
+                    self._transition(
+                        to=Phase.PED_CLEARANCE,
+                        now=now,
+                        reason="Maximum pedestrian walk guard reached",
+                    )
             elif elapsed >= self.config.min_ped_walk:
                 nobody_in_controlled_zones = (
                     snapshot.people_waiting_zone == 0
@@ -230,6 +253,7 @@ class StateMachine:
         self.phase_started_at = now
         self.person_detect_started_at = None
         self.no_person_started_at = None
+        self.ped_walk_waiting_for_vehicle = False
         self.transition_reason = reason
         if to is Phase.VEHICLE_GREEN:
             vehicle_count = 0 if snapshot is None else snapshot.total_vehicle_queue
