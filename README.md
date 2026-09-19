@@ -14,11 +14,11 @@ A software-focused, full-stack traffic-light simulation for a portfolio and clas
 - A configurable fail-safe simulation policy for missing, unavailable, or stale sensor data.
 - Flashing-yellow vehicle and disabled pedestrian signals during `SENSOR_FAULT`, followed by an all-red recovery buffer before vehicle green.
 
-The camera/YOLO proof of concept remains in `backend/main.py`. It is not imported by the simulation API, so starting the web version does not open a camera or download a model.
+Camera/YOLO and hardware integrations are historical competition work, preserved separately in the `competition/regional-2025` and `competition/national-2025` branches. The `main` branch contains only the web simulation.
 
 ## 🚀 Quick start
 
-Python 3 and npm are the only prerequisites. From the repository root, run:
+Python 3 and pnpm are the only prerequisites. From the repository root, run:
 
 ```bash
 ./run.sh
@@ -28,7 +28,7 @@ The script automatically:
 
 - Creates and activates `backend/.venv` if it does not exist.
 - Installs the backend packages from `backend/requirements.txt`.
-- Installs the frontend packages from `frontend/package.json` and `frontend/package-lock.json`.
+- Installs the frontend packages from `frontend/package.json` and `frontend/pnpm-lock.yaml` with a frozen lockfile.
 - Starts FastAPI at `http://127.0.0.1:8000` and Vite at `http://127.0.0.1:5173`.
 
 Open `http://127.0.0.1:5173`, and press `Ctrl+C` in the terminal to stop both servers. Dependency installation is safe to run again, so the same command can be used after pulling dependency updates.
@@ -53,7 +53,7 @@ Key backend modules:
 - `backend/app/simulation.py` — first sensor adapter, queued entities, movement, and thread-safe orchestration.
 - `backend/app/api.py` — request validation and HTTP routes only.
 
-The `SensorAdapter` protocol is the seam for a future camera adapter. A camera implementation should convert detections into `vehicle_queue_by_lane`, `people_waiting_zone`, `people_on_crosswalk`, and `people_outside_zones`; it should not add control rules or change the state machine.
+The `SensorAdapter` protocol keeps simulated sensor inputs separate from control decisions. It converts simulation state into `vehicle_queue_by_lane`, `people_waiting_zone`, `people_on_crosswalk`, and `people_outside_zones`; control rules remain in the state machine.
 
 ## 🔄 State transitions
 
@@ -93,20 +93,7 @@ uvicorn app.api:app --reload --host 127.0.0.1 --port 8000
 
 OpenAPI documentation is available at `http://127.0.0.1:8000/docs`.
 
-`requirements.txt` intentionally contains only the web-simulation dependencies.
-This keeps the API lightweight and prevents camera/ML packages from being installed
-for a server that never imports them.
-
-The preserved camera/YOLO prototype has a separate, optional dependency set:
-
-```bash
-python -m pip install -r requirements-vision.txt
-python main.py
-```
-
-The vision file uses a Python 3.14-compatible PyTorch pair (`torch 2.10` and
-`torchvision 0.25`). It is outside the web-simulation runtime and is not needed
-to run the portfolio milestone.
+`requirements.txt` intentionally contains only the web-simulation dependencies, so the portfolio application runs without computer-vision, machine-learning, or model packages.
 
 ## 💻 Run the frontend manually
 
@@ -114,8 +101,8 @@ In a second terminal:
 
 ```bash
 cd frontend
-npm install
-npm run dev
+pnpm install --frozen-lockfile
+pnpm run dev
 ```
 
 Open the URL printed by Vite (normally `http://127.0.0.1:5173`). The Vite proxy forwards the single `/api` base path to FastAPI at `127.0.0.1:8000`.
@@ -165,7 +152,7 @@ Target green is calculated as:
 clamp(total_vehicle_queue × TIME_PER_VEHICLE, MIN_GREEN, MAX_GREEN)
 ```
 
-The initial target is captured when the controller enters `VEHICLE_GREEN`. If more cars arrive, the target grows only enough to serve the remaining queue at the one-second discharge rate. Small and medium arrivals can therefore pass during the active green, while the twenty-second maximum is a hard cap that prevents a large or continuous queue from indefinitely delaying a confirmed pedestrian request. The target never shrinks during a green phase.
+The initial target is captured when the controller enters `VEHICLE_GREEN`. If more cars arrive, the target grows only enough to serve the remaining queue at the one-second discharge rate. Small and medium arrivals can therefore pass during the active green, while the 15-second `MAX_GREEN` limit is a hard cap that prevents a large or continuous queue from indefinitely delaying a confirmed pedestrian request. The target never shrinks during a green phase.
 
 Pedestrian clearance is independent of pedestrian count:
 
@@ -199,15 +186,15 @@ Run frontend checks:
 
 ```bash
 cd frontend
-npm run lint
-npm run build
+pnpm run lint
+pnpm run build
 ```
 
 The unit tests inject time rather than sleeping. They cover confirmation timing, zone semantics, mandatory yellow/all-red phases, distance-based clearance, bounded green calculation, stale/unavailable sensors, safe recovery, entity movement, and reset.
 
 ## 📌 Scope
 
-This milestone intentionally does not connect GPIO, a Raspberry Pi, IoT services, or physical signals. It also does not merge or modify competition-history branches. Those would require separate safety requirements and acceptance criteria.
+This milestone intentionally does not connect GPIO, a Raspberry Pi, IoT services, or physical signals. Camera/YOLO and hardware experiments remain available only as historical work in the `competition/regional-2025` and `competition/national-2025` branches; the portfolio edition does not merge or modify those branches.
 
 ## 📄 License
 

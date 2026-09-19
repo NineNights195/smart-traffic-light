@@ -7,7 +7,7 @@ BACKEND_DIR="$ROOT_DIR/backend"
 FRONTEND_DIR="$ROOT_DIR/frontend"
 VENV_DIR="$BACKEND_DIR/.venv"
 
-for command_name in python3 npm; do
+for command_name in python3 pnpm; do
   if ! command -v "$command_name" >/dev/null 2>&1; then
     echo "Error: '$command_name' is required but was not found in PATH." >&2
     exit 1
@@ -27,7 +27,10 @@ echo "Installing backend dependencies..."
 python -m pip install -r "$BACKEND_DIR/requirements.txt"
 
 echo "Installing frontend dependencies..."
-npm --prefix "$FRONTEND_DIR" install --no-audit --no-fund
+(
+  cd "$FRONTEND_DIR"
+  pnpm install --frozen-lockfile
+)
 
 backend_pid=""
 frontend_pid=""
@@ -63,7 +66,7 @@ backend_pid=$!
 echo "Starting frontend at http://127.0.0.1:5173..."
 (
   cd "$FRONTEND_DIR"
-  exec npm run dev -- --host 127.0.0.1
+  exec pnpm run dev -- --host 127.0.0.1
 ) &
 frontend_pid=$!
 

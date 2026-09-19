@@ -219,7 +219,7 @@ def test_ped_walk_timeout_still_applies_when_a_vehicle_is_waiting() -> None:
 
 @pytest.mark.parametrize(
     ("queue", "expected"),
-    [(0, 5), (1, 5), (3, 5), (5, 5), (10, 10), (100, 20)],
+    [(0, 5), (1, 5), (3, 5), (5, 5), (10, 10), (100, 15)],
 )
 def test_queue_controls_bounded_green_target(queue: int, expected: float) -> None:
     machine = StateMachine(now=0)
@@ -229,7 +229,7 @@ def test_queue_controls_bounded_green_target(queue: int, expected: float) -> Non
     )
 
     assert target == expected
-    assert 5 <= target <= 20
+    assert 5 <= target <= 15
 
 
 def test_new_vehicle_queue_extends_green_target_up_to_maximum() -> None:
@@ -250,7 +250,7 @@ def test_new_vehicle_queue_extends_green_target_up_to_maximum() -> None:
 
     assert started.target_green_duration == 5
     assert medium_arrival.target_green_duration == 7
-    assert large_arrival.target_green_duration == 20
+    assert large_arrival.target_green_duration == 15
 
 
 def test_pedestrian_waits_for_green_target_before_transition() -> None:
