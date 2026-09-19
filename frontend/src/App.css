@@ -2,7 +2,7 @@
 
 .app-shell { width: min(1500px, 100%); margin: 0 auto; padding: 0 32px 32px; }
 .topbar { min-height: 110px; display: flex; align-items: center; gap: 18px; border-bottom: 1px solid var(--line); }
-.topbar h1, .scene-heading h2, .panel-heading h2, .telemetry-heading h2 { margin: 2px 0 0; font-size: 22px; letter-spacing: -.04em; }
+.topbar h1, .scene-heading h2, .panel-heading h2, .telemetry-heading h2, .configuration-heading h2 { margin: 2px 0 0; font-size: 22px; letter-spacing: -.04em; }
 .eyebrow, .control-label { color: var(--muted); font: 500 10px/1.3 'DM Mono', monospace; letter-spacing: .16em; text-transform: uppercase; }
 .brand-mark { width: 31px; height: 54px; display: grid; place-content: center; gap: 4px; background: #20272b; border: 1px solid #394247; border-radius: 6px; }
 .brand-mark i { width: 9px; height: 9px; border-radius: 50%; background: #4a5155; }
@@ -15,8 +15,8 @@
 .fault-banner { display: flex; justify-content: space-between; gap: 20px; }
 .fault-banner span { color: #dfa4a1; }
 .dashboard-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; padding-top: 20px; }
-.intersection-card, .control-panel, .telemetry-section { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
-.scene-heading, .panel-heading, .telemetry-heading { min-height: 78px; padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+.intersection-card, .control-panel, .telemetry-section, .configuration-section { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.scene-heading, .panel-heading, .telemetry-heading, .configuration-heading { min-height: 78px; padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
 .live-pill { display: flex; align-items: center; gap: 8px; color: #b7c0c5; font: 500 11px 'DM Mono', monospace; }
 .live-pill i { width: 7px; height: 7px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 10px #c8f25099; }
 .live-pill.fault i { background: var(--red); box-shadow: 0 0 10px #ff5c5599; }
@@ -87,6 +87,17 @@
 .metric span { display: block; min-height: 28px; color: var(--muted); font: 10px/1.4 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; }
 .metric strong { display: block; margin-top: 8px; font: 500 clamp(15px, 1.4vw, 20px)/1.2 'DM Mono', monospace; overflow-wrap: anywhere; }
 .metric small { display: block; margin-top: 7px; color: #657078; font-size: 9px; }
+.configuration-section { margin-top: 20px; }
+.configuration-heading p { max-width: 46%; margin: 0; color: #a8b1b6; text-align: right; font: 12px/1.5 'DM Mono', monospace; }
+.configuration-table-wrap { overflow-x: auto; }
+.configuration-table { width: 100%; border-collapse: collapse; text-align: left; }
+.configuration-table th, .configuration-table td { padding: 13px 18px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.configuration-table thead th { color: var(--muted); background: var(--panel-soft); font: 500 10px/1.4 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; }
+.configuration-table tbody th { width: 31%; font-weight: 500; }
+.configuration-table tbody td:nth-child(2) { width: 18%; color: var(--lime); font: 500 18px/1.5 'DM Mono', monospace; white-space: nowrap; }
+.configuration-table tbody td:last-child { color: #a8b1b6; font-size: 14px; }
+.configuration-table code { color: var(--ink); font: 500 11px/1.5 'DM Mono', monospace; }
+.configuration-table tbody tr:last-child th, .configuration-table tbody tr:last-child td { border-bottom: 0; }
 footer { display: flex; justify-content: space-between; padding: 22px 3px 0; color: #596268; font: 10px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .08em; }
 
 .loading-screen { min-height: 100vh; display: grid; place-content: center; justify-items: center; padding: 24px; text-align: center; }
@@ -111,7 +122,7 @@ footer { display: flex; justify-content: space-between; padding: 22px 3px 0; col
   .topbar h1 { font-size: 18px; }
   .phase-block { padding-left: 10px; }
   .phase-block strong { max-width: 130px; font-size: 11px; }
-  .scene-heading, .panel-heading, .telemetry-heading { padding: 15px; }
+  .scene-heading, .panel-heading, .telemetry-heading, .configuration-heading { padding: 15px; }
   .intersection { min-height: 420px; padding-top: 80px; }
   .road { height: 250px; }
   .lane { height: 124px; }
@@ -122,8 +133,9 @@ footer { display: flex; justify-content: space-between; padding: 22px 3px 0; col
   .signal-cluster { right: 12px; }
   .car-stack { padding-right: 36%; gap: 8px; }
   .car { width: 41px; }
-  .fault-banner, .telemetry-heading, footer { align-items: flex-start; flex-direction: column; }
-  .telemetry-heading p { max-width: none; margin-top: 10px; text-align: left; }
+  .fault-banner, .telemetry-heading, .configuration-heading, footer { align-items: flex-start; flex-direction: column; }
+  .telemetry-heading p, .configuration-heading p { max-width: none; margin-top: 10px; text-align: left; }
+  .configuration-table th, .configuration-table td { padding: 11px 13px; }
   .control-group { grid-template-columns: 1fr; }
   .control-label { grid-column: auto; }
 }

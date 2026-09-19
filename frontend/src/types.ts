@@ -14,6 +14,28 @@ export type PedestrianSignal =
   | 'WALK'
   | 'FLASHING_DONT_WALK'
 
+export interface SimulationConfig {
+  min_green: number
+  max_green: number
+  time_per_vehicle: number
+  person_confirm: number
+  no_person_confirm: number
+  yellow_duration: number
+  all_red_to_ped_duration: number
+  all_red_to_vehicle_duration: number
+  min_ped_walk: number
+  max_ped_walk: number
+  crosswalk_distance_m: number
+  walking_speed_mps: number
+  flash_interval: number
+  sensor_max_age: number
+  pedestrian_entry_delay: number
+  sensor_fault_vehicle_light: string
+  sensor_fault_pedestrian_signal: string
+  freeze_movement_on_sensor_fault: boolean
+  pedestrian_clearance_duration: number
+}
+
 export interface SimulationState {
   phase: Phase
   vehicle_light: VehicleLight
@@ -33,4 +55,5 @@ export interface SimulationState {
   people_outside_zones: number
   sensor_available: boolean
   captured_at: number
+  config: SimulationConfig
 }

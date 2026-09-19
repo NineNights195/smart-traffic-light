@@ -190,4 +190,10 @@ class SimulationService:
         state["people_outside_zones"] = snapshot.people_outside_zones
         state["sensor_available"] = snapshot.sensor_available
         state["captured_at"] = snapshot.captured_at
+        state["config"] = {
+            **asdict(self.config),
+            "pedestrian_clearance_duration": (
+                self.config.pedestrian_clearance_duration
+            ),
+        }
         return state

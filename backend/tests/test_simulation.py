@@ -1,3 +1,4 @@
+from app.config import TrafficConfig
 from app.models import Phase
 from app.simulation import SimulationService
 
@@ -69,6 +70,23 @@ def test_reset_restores_controller_and_all_simulation_counts() -> None:
     assert reset["people_on_crosswalk"] == 0
     assert reset["sensor_available"] is True
     assert reset["sensor_status"] == "OK"
+
+
+def test_state_exposes_the_active_simulation_configuration() -> None:
+    clock = FakeClock()
+    config = TrafficConfig(
+        max_green=17,
+        crosswalk_distance_m=7,
+        walking_speed_mps=0.8,
+    )
+    simulation = SimulationService(config=config, clock=clock)
+
+    state = simulation.state()
+
+    assert state["config"]["max_green"] == 17
+    assert state["config"]["crosswalk_distance_m"] == 7
+    assert state["config"]["walking_speed_mps"] == 0.8
+    assert state["config"]["pedestrian_clearance_duration"] == 9
 
 
 def test_waiting_pedestrians_move_to_crosswalk_during_walk_phase() -> None:

@@ -136,7 +136,7 @@ All values live in `backend/app/config.py` as `TrafficConfig`.
 | Setting | Default | Meaning |
 | --- | ---: | --- |
 | `MIN_GREEN` | 5 s | Base duration for each fixed vehicle-green service window |
-| `MAX_GREEN` | 20 s | Hard upper bound for the active green window |
+| `MAX_GREEN` | 15 s | Hard upper bound for the active green window |
 | `TIME_PER_VEHICLE` | 1 s | Service time per starting vehicle; also the simulated vehicle discharge interval |
 | `PERSON_CONFIRM` | 1.5 s | Continuous waiting-zone presence required |
 | `NO_PERSON_CONFIRM` | 1.5 s | Continuous empty controlled zones required |

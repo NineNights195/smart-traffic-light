@@ -6,6 +6,28 @@ import './App.css'
 const POLL_INTERVAL_MS = 350
 const GOLDEN_ANGLE = 137.508
 
+const CONFIGURATION_ROWS = [
+  ['min_green', 'MIN_GREEN', 's', 'Base vehicle-green service window'],
+  ['max_green', 'MAX_GREEN', 's', 'Hard upper bound for the active green window'],
+  ['time_per_vehicle', 'TIME_PER_VEHICLE', 's', 'Service and discharge time per vehicle'],
+  ['person_confirm', 'PERSON_CONFIRM', 's', 'Continuous waiting-zone presence required'],
+  ['no_person_confirm', 'NO_PERSON_CONFIRM', 's', 'Continuous empty controlled zones required'],
+  ['yellow_duration', 'YELLOW_DURATION', 's', 'Fixed vehicle-yellow interval'],
+  ['all_red_to_ped_duration', 'ALL_RED_TO_PED_DURATION', 's', 'Safety buffer before pedestrian walk'],
+  ['all_red_to_vehicle_duration', 'ALL_RED_TO_VEHICLE_DURATION', 's', 'Safety buffer before vehicle green'],
+  ['min_ped_walk', 'MIN_PED_WALK', 's', 'Minimum pedestrian walk interval'],
+  ['max_ped_walk', 'MAX_PED_WALK', 's', 'Walk timeout when vehicle demand exists'],
+  ['crosswalk_distance_m', 'CROSSWALK_DISTANCE_M', 'm', 'Crossing distance used for clearance'],
+  ['walking_speed_mps', 'WALKING_SPEED_MPS', 'm/s', 'Assumed pedestrian walking speed'],
+  ['pedestrian_clearance_duration', 'PEDESTRIAN_CLEARANCE_DURATION', 's', 'Derived clearance time (distance ÷ speed)'],
+  ['flash_interval', 'FLASH_INTERVAL', 's', 'Signal flash interval'],
+  ['sensor_max_age', 'SENSOR_MAX_AGE', 's', 'Maximum sensor snapshot age'],
+  ['pedestrian_entry_delay', 'PEDESTRIAN_ENTRY_DELAY', 's', 'Delay before a new pedestrian starts crossing'],
+  ['sensor_fault_vehicle_light', 'SENSOR_FAULT_VEHICLE_LIGHT', '', 'Vehicle signal during a sensor fault'],
+  ['sensor_fault_pedestrian_signal', 'SENSOR_FAULT_PEDESTRIAN_SIGNAL', '', 'Pedestrian signal during a sensor fault'],
+  ['freeze_movement_on_sensor_fault', 'FREEZE_MOVEMENT_ON_SENSOR_FAULT', '', 'Freeze simulated entities during a fault'],
+] as const satisfies ReadonlyArray<readonly [keyof SimulationState['config'], string, string, string]>
+
 interface VisualEntity {
   id: number
   hue: number
@@ -23,6 +45,11 @@ function createVisualEntity(): VisualEntity {
 
 function formatSeconds(value: number | null) {
   return value === null ? '—' : `${value.toFixed(1)}s`
+}
+
+function formatConfigValue(value: number | string | boolean, unit: string) {
+  if (typeof value === 'boolean') return value ? 'Enabled' : 'Disabled'
+  return `${value}${unit ? ` ${unit}` : ''}`
 }
 
 interface EntityStackProps {
@@ -315,6 +342,36 @@ function App() {
           <Metric label="Clearance duration" value={`${state.pedestrian_clearance_duration}s`} note="distance ÷ walking speed" />
           <Metric label="Sensor status" value={state.sensor_status} />
           <Metric label="Sensor age" value={formatSeconds(state.sensor_age)} />
+        </div>
+      </section>
+
+      <section className="configuration-section" aria-labelledby="configuration-title">
+        <div className="configuration-heading">
+          <div>
+            <span className="eyebrow">Backend source of truth</span>
+            <h2 id="configuration-title">Current simulation configuration</h2>
+          </div>
+          <p>Live values from the active TrafficConfig instance.</p>
+        </div>
+        <div className="configuration-table-wrap">
+          <table className="configuration-table">
+            <thead>
+              <tr>
+                <th scope="col">Setting</th>
+                <th scope="col">Current value</th>
+                <th scope="col">Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              {CONFIGURATION_ROWS.map(([key, label, unit, meaning]) => (
+                <tr key={key}>
+                  <th scope="row"><code>{label}</code></th>
+                  <td>{formatConfigValue(state.config[key], unit)}</td>
+                  <td>{meaning}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 
