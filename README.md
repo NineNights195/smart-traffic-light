@@ -1,10 +1,10 @@
-# Smart Traffic Light
+# 🚦 Smart Traffic Light
 
 A software-focused, full-stack traffic-light simulation for a portfolio and classroom demonstration. A Python state machine owns every control decision; the React interface only displays state and sends simulated sensor inputs.
 
 > **Educational prototype only.** This project is not a certified traffic controller and must not be used on public roads. Every timing value and fallback policy below is for demonstration and requires design, hazard analysis, verification, and approval by qualified traffic-safety professionals before any real-world use.
 
-## What the simulation demonstrates
+## ✨ What the simulation demonstrates
 
 - Two independent vehicle queues that discharge while the vehicle signal is green.
 - A waiting zone that is the only source of pedestrian requests.
@@ -16,7 +16,7 @@ A software-focused, full-stack traffic-light simulation for a portfolio and clas
 
 The camera/YOLO proof of concept remains in `backend/main.py`. It is not imported by the simulation API, so starting the web version does not open a camera or download a model.
 
-## Quick start
+## 🚀 Quick start
 
 Python 3 and npm are the only prerequisites. From the repository root, run:
 
@@ -33,7 +33,7 @@ The script automatically:
 
 Open `http://127.0.0.1:5173`, and press `Ctrl+C` in the terminal to stop both servers. Dependency installation is safe to run again, so the same command can be used after pulling dependency updates.
 
-## Architecture
+## 🏗️ Architecture
 
 ```text
 React presentation layer
@@ -55,7 +55,7 @@ Key backend modules:
 
 The `SensorAdapter` protocol is the seam for a future camera adapter. A camera implementation should convert detections into `vehicle_queue_by_lane`, `people_waiting_zone`, `people_on_crosswalk`, and `people_outside_zones`; it should not add control rules or change the state machine.
 
-## State transitions
+## 🔄 State transitions
 
 ```mermaid
 stateDiagram-v2
@@ -75,9 +75,11 @@ stateDiagram-v2
     SENSOR_FAULT --> ALL_RED_TO_VEHICLE: fresh valid snapshot
 ```
 
+
+
 `PED_CLEARANCE` is the top-level clearance phase. Flashing is a pedestrian-signal behavior (`FLASHING_DONT_WALK`), never a separate `FLASHING` phase.
 
-## Run the backend manually
+## 🐍 Run the backend manually
 
 Python 3.14.7 is supported and used for verification.
 
@@ -106,7 +108,7 @@ The vision file uses a Python 3.14-compatible PyTorch pair (`torch 2.10` and
 `torchvision 0.25`). It is outside the web-simulation runtime and is not needed
 to run the portfolio milestone.
 
-## Run the frontend manually
+## 💻 Run the frontend manually
 
 In a second terminal:
 
@@ -118,38 +120,44 @@ npm run dev
 
 Open the URL printed by Vite (normally `http://127.0.0.1:5173`). The Vite proxy forwards the single `/api` base path to FastAPI at `127.0.0.1:8000`.
 
-## API
+## 🔌 API
 
-| Method | Endpoint | Purpose / example body |
-| --- | --- | --- |
-| `GET` | `/api/health` | Service health |
-| `GET` | `/api/state` | Current controller, timer, queues, zones, and sensor state |
-| `POST` | `/api/simulation/vehicles` | `{"lane": 1, "count": 1}` |
-| `POST` | `/api/simulation/pedestrians` | `{"zone": "waiting_left", "count": 1}` |
-| `POST` | `/api/simulation/sensor` | `{"available": false}` or `{"available": true}` |
-| `POST` | `/api/simulation/reset` | Reset controller, queues, people, and sensor |
 
-## Configuration
+| Method | Endpoint                      | Purpose / example body                                     |
+| ------ | ----------------------------- | ---------------------------------------------------------- |
+| `GET`  | `/api/health`                 | Service health                                             |
+| `GET`  | `/api/state`                  | Current controller, timer, queues, zones, and sensor state |
+| `POST` | `/api/simulation/vehicles`    | `{"lane": 1, "count": 1}`                                  |
+| `POST` | `/api/simulation/pedestrians` | `{"zone": "waiting_left", "count": 1}`                     |
+| `POST` | `/api/simulation/sensor`      | `{"available": false}` or `{"available": true}`            |
+| `POST` | `/api/simulation/reset`       | Reset controller, queues, people, and sensor               |
+
+
+
+
+## ⚙️ Configuration
 
 All values live in `backend/app/config.py` as `TrafficConfig`.
 
-| Setting | Default | Meaning |
-| --- | ---: | --- |
-| `MIN_GREEN` | 5 s | Base duration for each fixed vehicle-green service window |
-| `MAX_GREEN` | 15 s | Hard upper bound for the active green window |
-| `TIME_PER_VEHICLE` | 1 s | Service time per starting vehicle; also the simulated vehicle discharge interval |
-| `PERSON_CONFIRM` | 1.5 s | Continuous waiting-zone presence required |
-| `NO_PERSON_CONFIRM` | 1.5 s | Continuous empty controlled zones required |
-| `YELLOW_DURATION` | 3 s | Fixed vehicle yellow interval |
-| `ALL_RED_TO_PED_DURATION` | 1 s | Buffer before pedestrian walk |
-| `ALL_RED_TO_VEHICLE_DURATION` | 1 s | Buffer before vehicle green |
-| `MIN_PED_WALK` | 4 s | Minimum pedestrian walk interval |
-| `MAX_PED_WALK` | 30 s | Ends an occupied walk phase when vehicle demand exists; otherwise walk remains active until a car arrives |
-| `CROSSWALK_DISTANCE_M` | 6 m | Crossing distance used for clearance |
-| `WALKING_SPEED_MPS` | 1.0 m/s | Demonstration walking speed |
-| `FLASH_INTERVAL` | 0.5 s | Pedestrian clearance flash cadence |
-| `SENSOR_MAX_AGE` | 2 s | Maximum sensor snapshot age |
-| `PEDESTRIAN_ENTRY_DELAY` | 1.5 s | Waiting-zone delay before a newly added pedestrian enters an active walk phase |
+
+| Setting                       | Default | Meaning                                                                                                   |
+| ----------------------------- | ------- | --------------------------------------------------------------------------------------------------------- |
+| `MIN_GREEN`                   | 5 s     | Base duration for each fixed vehicle-green service window                                                 |
+| `MAX_GREEN`                   | 15 s    | Hard upper bound for the active green window                                                              |
+| `TIME_PER_VEHICLE`            | 1 s     | Service time per starting vehicle; also the simulated vehicle discharge interval                          |
+| `PERSON_CONFIRM`              | 1.5 s   | Continuous waiting-zone presence required                                                                 |
+| `NO_PERSON_CONFIRM`           | 1.5 s   | Continuous empty controlled zones required                                                                |
+| `YELLOW_DURATION`             | 3 s     | Fixed vehicle yellow interval                                                                             |
+| `ALL_RED_TO_PED_DURATION`     | 1 s     | Buffer before pedestrian walk                                                                             |
+| `ALL_RED_TO_VEHICLE_DURATION` | 1 s     | Buffer before vehicle green                                                                               |
+| `MIN_PED_WALK`                | 4 s     | Minimum pedestrian walk interval                                                                          |
+| `MAX_PED_WALK`                | 30 s    | Ends an occupied walk phase when vehicle demand exists; otherwise walk remains active until a car arrives |
+| `CROSSWALK_DISTANCE_M`        | 6 m     | Crossing distance used for clearance                                                                      |
+| `WALKING_SPEED_MPS`           | 1.0 m/s | Demonstration walking speed                                                                               |
+| `FLASH_INTERVAL`              | 0.5 s   | Pedestrian clearance flash cadence                                                                        |
+| `SENSOR_MAX_AGE`              | 2 s     | Maximum sensor snapshot age                                                                               |
+| `PEDESTRIAN_ENTRY_DELAY`      | 1.5 s   | Waiting-zone delay before a newly added pedestrian enters an active walk phase                            |
+
 
 Target green is calculated as:
 
@@ -167,7 +175,7 @@ ceil(CROSSWALK_DISTANCE_M / WALKING_SPEED_MPS)
 
 The simulation's configurable sensor-fault fallback is vehicle `FLASHING_YELLOW`, pedestrian `OFF`, and frozen vehicle/pedestrian movement. This is a project policy for demonstrating fault handling, **not a universal or standards-based public-road policy**.
 
-## Demo walkthrough
+## 🎬 Demo walkthrough
 
 1. Start both servers and open the dashboard.
 2. Add several vehicles to each lane. The vehicle-green target starts from the initial queue and can grow for new arrivals, but never beyond `MAX_GREEN`; waiting vehicles leave while green.
@@ -178,7 +186,7 @@ The simulation's configurable sensor-fault fallback is vehicle `FLASHING_YELLOW`
 7. Select **Restore sensor**. The controller enters `ALL_RED_TO_VEHICLE` before returning to green.
 8. Select **Reset simulation** to clear every entity and restore the initial state.
 
-## Verification
+## ✅ Verification
 
 Run the deterministic backend tests:
 
@@ -197,10 +205,10 @@ npm run build
 
 The unit tests inject time rather than sleeping. They cover confirmation timing, zone semantics, mandatory yellow/all-red phases, distance-based clearance, bounded green calculation, stale/unavailable sensors, safe recovery, entity movement, and reset.
 
-## Scope
+## 📌 Scope
 
 This milestone intentionally does not connect GPIO, a Raspberry Pi, IoT services, or physical signals. It also does not merge or modify competition-history branches. Those would require separate safety requirements and acceptance criteria.
 
-## License
+## 📄 License
 
 See [LICENSE](LICENSE).
