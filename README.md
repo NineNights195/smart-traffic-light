@@ -1,8 +1,30 @@
 # 🚦 Smart Traffic Light
 
-A software-focused, full-stack traffic-light simulation for a portfolio and classroom demonstration. A Python state machine owns every control decision; the React interface only displays state and sends simulated sensor inputs.
+A software-focused, full-stack traffic-light simulation. A Python state machine owns every control decision; the React interface only displays state and sends simulated sensor inputs.
+
+![Smart Traffic Light Demo](assets/demo.gif)
 
 > **Educational prototype only.** This project is not a certified traffic controller and must not be used on public roads. Every timing value and fallback policy below is for demonstration and requires design, hazard analysis, verification, and approval by qualified traffic-safety professionals before any real-world use.
+
+## 🌟 What Makes This System Different
+
+Compared with a basic fixed-time signal or simple simulation, this project:
+
+- **Adapts to vehicle demand** with a bounded green target between 5 and 15 seconds.
+
+![](assets/adaptive-vehicle-demand.gif)
+
+- **Prioritizes pedestrian safety & efficiency** by tracking waiting zones and crosswalk occupancy—truncating clearance early once pedestrians clear to minimize vehicle delay.
+
+![](assets/prioritizes-pedestrian.gif)
+
+- **Handles sensor faults** with flashing yellow, frozen movement, and safe recovery.
+
+![](assets/sensor-fault.gif)
+
+- **Makes safety logic explicit** through separate yellow, all-red, walk, and clearance states.
+
+- **Keeps control logic testable** through a Python State Machine and deterministic tests.
 
 ## ✨ What the simulation demonstrates
 
@@ -13,8 +35,6 @@ A software-focused, full-stack traffic-light simulation for a portfolio and clas
 - Distance-based pedestrian clearance with flashing `DONT_WALK`.
 - A configurable fail-safe simulation policy for missing, unavailable, or stale sensor data.
 - Flashing-yellow vehicle and disabled pedestrian signals during `SENSOR_FAULT`, followed by an all-red recovery buffer before vehicle green.
-
-Camera/YOLO and hardware integrations are historical competition work, preserved separately in the `competition/regional-2025` and `competition/national-2025` branches. The `main` branch contains only the web simulation.
 
 ## 🚀 Quick start
 
@@ -75,8 +95,6 @@ stateDiagram-v2
     SENSOR_FAULT --> ALL_RED_TO_VEHICLE: fresh valid snapshot
 ```
 
-
-
 `PED_CLEARANCE` is the top-level clearance phase. Flashing is a pedestrian-signal behavior (`FLASHING_DONT_WALK`), never a separate `FLASHING` phase.
 
 ## 🐍 Run the backend manually
@@ -109,7 +127,6 @@ Open the URL printed by Vite (normally `http://127.0.0.1:5173`). The Vite proxy 
 
 ## 🔌 API
 
-
 | Method | Endpoint                      | Purpose / example body                                     |
 | ------ | ----------------------------- | ---------------------------------------------------------- |
 | `GET`  | `/api/health`                 | Service health                                             |
@@ -119,13 +136,9 @@ Open the URL printed by Vite (normally `http://127.0.0.1:5173`). The Vite proxy 
 | `POST` | `/api/simulation/sensor`      | `{"available": false}` or `{"available": true}`            |
 | `POST` | `/api/simulation/reset`       | Reset controller, queues, people, and sensor               |
 
-
-
-
 ## ⚙️ Configuration
 
 All values live in `backend/app/config.py` as `TrafficConfig`.
-
 
 | Setting                       | Default | Meaning                                                                                                   |
 | ----------------------------- | ------- | --------------------------------------------------------------------------------------------------------- |
@@ -144,7 +157,6 @@ All values live in `backend/app/config.py` as `TrafficConfig`.
 | `FLASH_INTERVAL`              | 0.5 s   | Pedestrian clearance flash cadence                                                                        |
 | `SENSOR_MAX_AGE`              | 2 s     | Maximum sensor snapshot age                                                                               |
 | `PEDESTRIAN_ENTRY_DELAY`      | 1.5 s   | Waiting-zone delay before a newly added pedestrian enters an active walk phase                            |
-
 
 Target green is calculated as:
 
@@ -194,7 +206,7 @@ The unit tests inject time rather than sleeping. They cover confirmation timing,
 
 ## 📌 Scope
 
-This milestone intentionally does not connect GPIO, a Raspberry Pi, IoT services, or physical signals. Camera/YOLO and hardware experiments remain available only as historical work in the `competition/regional-2025` and `competition/national-2025` branches; the portfolio edition does not merge or modify those branches.
+This milestone intentionally does not connect GPIO, a Raspberry Pi, IoT services, or physical signals. Camera/YOLO and hardware experiments remain available only as historical work in the `competition/regional-2025` and `competition/national-2025` branches; the software-focused edition does not merge or modify those branches.
 
 ## 📄 License
 
